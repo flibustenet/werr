@@ -11,7 +11,7 @@ import (
 
 func a() error {
 	e := b()
-	return werr.Wrapf(e, "from a")
+	return fmt.Errorf("from a : %w", e)
 }
 func b() error {
 	e := c()
@@ -34,5 +34,5 @@ func d() error {
 
 func main() {
 	e := a()
-	fmt.Println(werr.Print(e))
+	fmt.Println(werr.PrintSkip(e, ""))
 }

@@ -3,14 +3,13 @@ package werr
 import (
 	"errors"
 	"fmt"
-	"os"
 	"runtime"
 	"strings"
 )
 
 type Error struct {
 	Err   error
-	Stack []string
+	Stack []runtime.Frame
 }
 
 func (e Error) Unwrap() error {
@@ -20,33 +19,58 @@ func (e Error) Unwrap() error {
 func (e Error) Error() string {
 	return e.Err.Error()
 }
+
+// remove lines before skip in suffix
+// ex : ServeHTTP
+// and path of current file
+func PrintSkip(err error, skip string) string {
+	s := ""
+	var e Error
+	if errors.As(err, &e) {
+		if len(e.Stack) > 0 {
+			for i := len(e.Stack) - 1; i >= 0; i-- {
+				frame := e.Stack[i]
+				if skip != "" && strings.HasSuffix(frame.Function, skip) {
+					s = ""
+					continue
+				}
+				file := frame.File
+				s += fmt.Sprintf("--- %s\n", frame.Function)
+				s += fmt.Sprintf("%s:%d\n", file, frame.Line)
+			}
+		}
+	} else {
+		return fmt.Sprintf("%+v", err) // pkg.errors stack
+	}
+	return s + err.Error()
+}
+
 func Print(err error) string {
 	s := ""
 	var e Error
 	if errors.As(err, &e) {
 		if len(e.Stack) > 0 {
-			path, _ := os.Getwd()
 			for i := len(e.Stack) - 1; i >= 0; i-- {
-				fl := e.Stack[i]
-				if strings.HasPrefix(fl, path) {
-					fl = fl[len(path)+1 : len(fl)]
-				}
-				s += fmt.Sprintf("%s\n", fl)
+				frame := e.Stack[i]
+				s += fmt.Sprintf("--- %s\n", frame.Function)
+				s += fmt.Sprintf("%s:%d\n", frame.File, frame.Line)
 			}
 		}
 	}
 	return s + err.Error()
 }
 
-func Wrapf(e error, msg string, args ...interface{}) error {
+// wrap error with stack only if not already
+// error is wrapped with fmt.Errorf(msg + " : %w",err)
+func Wrapf(err error, msg string, args ...interface{}) error {
 	s := fmt.Sprintf(msg, args...)
-	e = fmt.Errorf(s+" : %w", e)
+	err = fmt.Errorf(s+" : %w", err)
 	var es Error
-	if errors.As(e, &es) {
-		return e
+	if errors.As(err, &es) {
+		return err
 	}
 	stk := getStackTrace(3)
-	return Error{Err: e, Stack: stk} //fmt.Sprintf("%s line %d", file, line)}
+	return Error{Err: err, Stack: stk}
 }
 
 // add stack trace to an error if it's not
@@ -58,17 +82,20 @@ func Stack(e error) error {
 	stk := getStackTrace(3)
 	return Error{Err: e, Stack: stk}
 }
-func getStackTrace(nb int) []string {
-	stackBuf := make([]uintptr, 50)
+
+// format stack trace to be printed line by line
+// in reverse order
+func getStackTrace(nb int) []runtime.Frame {
+	stackBuf := make([]uintptr, 1024)
 	length := runtime.Callers(nb, stackBuf[:])
 	stack := stackBuf[:length]
 
-	trace := []string{}
+	trace := []runtime.Frame{}
 	frames := runtime.CallersFrames(stack)
 	for {
 		frame, more := frames.Next()
-		if !strings.Contains(frame.File, "runtime/") {
-			trace = append(trace, fmt.Sprintf("%s:%d %s", frame.File, frame.Line, frame.Function))
+		if !strings.HasPrefix(frame.Function, "runtime") {
+			trace = append(trace, frame)
 		}
 		if !more {
 			break
