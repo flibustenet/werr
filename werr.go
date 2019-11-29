@@ -3,6 +3,8 @@ package werr
 import (
 	"errors"
 	"fmt"
+	"io"
+	"os"
 	"runtime"
 	"strings"
 )
@@ -20,10 +22,20 @@ func (e Error) Error() string {
 	return e.Err.Error()
 }
 
-// remove lines before skip in suffix
+// FprintSkip write SprintSkip to writer
+func FprintSkip(w io.Writer, err error, skip string) {
+	w.Write([]byte(SprintSkip(err, skip)))
+}
+
+// PrintSkip write SprintSkip to stdout
+func PrintSkip(err error, skip string) {
+	FprintSkip(os.Stdout, err, skip)
+}
+
+// PrintSkip remove lines before skip in suffix
 // ex : ServeHTTP
-// and path of current file
-func PrintSkip(err error, skip string) string {
+// return as string
+func SprintSkip(err error, skip string) string {
 	s := ""
 	var e Error
 	if errors.As(err, &e) {
@@ -45,7 +57,13 @@ func PrintSkip(err error, skip string) string {
 	return s + err.Error()
 }
 
-func Print(err error) string {
+// Fprint write traceback in f
+func Fprint(f io.Writer, err error) {
+	f.Write([]byte(Sprint(err)))
+}
+
+// Sprint return traceback as string
+func Sprint(err error) string {
 	s := ""
 	var e Error
 	if errors.As(err, &e) {
@@ -60,7 +78,12 @@ func Print(err error) string {
 	return s + err.Error()
 }
 
-// wrap error with stack only if not already
+// Print print traceback to stdout
+func Print(err error) {
+	Fprint(os.Stdout, err)
+}
+
+// Wrapf wrap error with stack only if not already
 // error is wrapped with fmt.Errorf(msg + " : %w",err)
 func Wrapf(err error, msg string, args ...interface{}) error {
 	s := fmt.Sprintf(msg, args...)
@@ -73,7 +96,7 @@ func Wrapf(err error, msg string, args ...interface{}) error {
 	return Error{Err: err, Stack: stk}
 }
 
-// add stack trace to an error if it's not
+// Stack add stack trace to an error if it's not
 func Stack(e error) error {
 	var es Error
 	if errors.As(e, &es) {
@@ -83,8 +106,7 @@ func Stack(e error) error {
 	return Error{Err: e, Stack: stk}
 }
 
-// format stack trace to be printed line by line
-// in reverse order
+// getStackTrace return Frames after nb
 func getStackTrace(nb int) []runtime.Frame {
 	stackBuf := make([]uintptr, 1024)
 	length := runtime.Callers(nb, stackBuf[:])

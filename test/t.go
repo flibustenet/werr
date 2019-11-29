@@ -34,5 +34,6 @@ func d() error {
 
 func main() {
 	e := a()
-	fmt.Println(werr.PrintSkip(e, ""))
+	fmt.Println("==================================================================================")
+	werr.Print(e)
 }
