@@ -86,6 +86,9 @@ func Print(err error) {
 // Wrapf wrap error with stack only if not already
 // error is wrapped with fmt.Errorf(msg + " : %w",err)
 func Wrapf(err error, msg string, args ...interface{}) error {
+	if err == nil {
+		return err
+	}
 	s := fmt.Sprintf(msg, args...)
 	err = fmt.Errorf(s+" : %w", err)
 	var es Error
@@ -98,6 +101,9 @@ func Wrapf(err error, msg string, args ...interface{}) error {
 
 // Stack add stack trace to an error if it's not
 func Stack(e error) error {
+	if e == nil {
+		return e
+	}
 	var es Error
 	if errors.As(e, &es) {
 		return e
