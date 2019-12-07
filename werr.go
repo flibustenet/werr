@@ -6,20 +6,69 @@ import (
 	"io"
 	"os"
 	"runtime"
+	"strconv"
 	"strings"
 )
 
 type Error struct {
 	Err   error
-	Stack []runtime.Frame
+	trace []uintptr
 }
 
 func (e Error) Unwrap() error {
 	return e.Err
 }
 
+func (e Error) Is(err error) bool {
+	if err, ok := err.(Error); ok {
+		return errors.Is(e.Err, err.Err)
+	}
+	return errors.Is(e.Err, err)
+}
+
 func (e Error) Error() string {
 	return e.Err.Error()
+}
+
+func New(s string) error {
+	return Stack(errors.New(s))
+}
+
+func (e Error) SprintSkip(skip string) string {
+	trace := []runtime.Frame{}
+	frames := runtime.CallersFrames(e.trace)
+	for {
+		frame, more := frames.Next()
+		if !strings.HasPrefix(frame.Function, "runtime") {
+			trace = append(trace, frame)
+		}
+		if !more {
+			break
+		}
+	}
+	maxLenFunc := 0
+	s := ""
+	for i := len(trace) - 1; i >= 0; i-- {
+		frame := trace[i]
+		if skip != "" && strings.HasSuffix(frame.Function, skip) {
+			continue
+		}
+		s := fmt.Sprintf("%s:%d", frame.File, frame.Line)
+		if len(s) > maxLenFunc {
+			maxLenFunc = len(s)
+		}
+	}
+
+	for i := len(trace) - 1; i >= 0; i-- {
+		frame := trace[i]
+		if skip != "" && strings.HasSuffix(frame.Function, skip) {
+			s = ""
+			continue
+		}
+		st := fmt.Sprintf("%s:%d", frame.File, frame.Line)
+		s += fmt.Sprintf("%-"+strconv.Itoa(maxLenFunc)+"s | %s\n", st, frame.Function)
+	}
+	return s
 }
 
 // FprintSkip write SprintSkip to writer
@@ -36,25 +85,11 @@ func PrintSkip(err error, skip string) {
 // ex : ServeHTTP
 // return as string
 func SprintSkip(err error, skip string) string {
-	s := ""
 	var e Error
 	if errors.As(err, &e) {
-		if len(e.Stack) > 0 {
-			for i := len(e.Stack) - 1; i >= 0; i-- {
-				frame := e.Stack[i]
-				if skip != "" && strings.HasSuffix(frame.Function, skip) {
-					s = ""
-					continue
-				}
-				file := frame.File
-				s += fmt.Sprintf("--- %s\n", frame.Function)
-				s += fmt.Sprintf("%s:%d\n", file, frame.Line)
-			}
-		}
-	} else {
-		return fmt.Sprintf("%+v", err) // pkg.errors stack
+		return e.SprintSkip(skip) + err.Error()
 	}
-	return s + err.Error()
+	return fmt.Sprintf("%+v", err) // pkg.errors stack
 }
 
 // Fprint write traceback in f
@@ -64,18 +99,7 @@ func Fprint(f io.Writer, err error) {
 
 // Sprint return traceback as string
 func Sprint(err error) string {
-	s := ""
-	var e Error
-	if errors.As(err, &e) {
-		if len(e.Stack) > 0 {
-			for i := len(e.Stack) - 1; i >= 0; i-- {
-				frame := e.Stack[i]
-				s += fmt.Sprintf("--- %s\n", frame.Function)
-				s += fmt.Sprintf("%s:%d\n", frame.File, frame.Line)
-			}
-		}
-	}
-	return s + err.Error()
+	return SprintSkip(err, "")
 }
 
 // Print print traceback to stdout
@@ -96,7 +120,7 @@ func Wrapf(err error, msg string, args ...interface{}) error {
 		return err
 	}
 	stk := getStackTrace(3)
-	return Error{Err: err, Stack: stk}
+	return Error{Err: err, trace: stk}
 }
 
 // Stack add stack trace to an error if it's not
@@ -109,25 +133,13 @@ func Stack(e error) error {
 		return e
 	}
 	stk := getStackTrace(3)
-	return Error{Err: e, Stack: stk}
+	return Error{Err: e, trace: stk}
 }
 
 // getStackTrace return Frames after nb
-func getStackTrace(nb int) []runtime.Frame {
+func getStackTrace(nb int) []uintptr {
 	stackBuf := make([]uintptr, 1024)
 	length := runtime.Callers(nb, stackBuf[:])
 	stack := stackBuf[:length]
-
-	trace := []runtime.Frame{}
-	frames := runtime.CallersFrames(stack)
-	for {
-		frame, more := frames.Next()
-		if !strings.HasPrefix(frame.Function, "runtime") {
-			trace = append(trace, frame)
-		}
-		if !more {
-			break
-		}
-	}
-	return trace
+	return stack
 }
