@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"errors"
 	"fmt"
+	"runtime/debug"
 
 	"go.flib.fr/werr"
 	"go.flib.fr/werr/test/lib"
@@ -25,7 +26,10 @@ func c() error {
 	return e
 }
 func d() error {
+	//panic("ici")
 	e := lib.Lili()
+	//werr.Check(e)
+	werr.Checkf(e, "panique à bord")
 	if errors.Is(e, sql.ErrNoRows) {
 		return werr.Wrapf(e, "SQLNOROWS in D")
 	}
@@ -33,6 +37,15 @@ func d() error {
 }
 
 func main() {
+	defer func() {
+		if e := recover(); e != nil {
+			if err, ok := e.(error); ok {
+				werr.Print(err)
+			}
+		} else {
+			fmt.Printf("%s", debug.Stack())
+		}
+	}()
 	e := a()
 	fmt.Println("==================================================================================")
 	werr.Print(e)

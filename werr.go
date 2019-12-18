@@ -123,6 +123,24 @@ func Wrapf(err error, msg string, args ...interface{}) error {
 	return Error{Err: err, trace: stk}
 }
 
+// panic and wrap if err != nil
+// DANGER !
+func Checkf(err error, msg string, args ...interface{}) {
+	if err == nil {
+		return
+	}
+	panic(Wrapf(err, msg, args...))
+}
+
+// panic and wrap if err != nil
+// DANGER !
+func Check(err error) {
+	if err == nil {
+		return
+	}
+	panic(Stack(err))
+}
+
 // Stack add stack trace to an error if it's not
 func Stack(e error) error {
 	if e == nil {
