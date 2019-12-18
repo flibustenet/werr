@@ -31,7 +31,7 @@ func (e Error) Error() string {
 }
 
 func New(s string) error {
-	return Stack(errors.New(s))
+	return Wrap(errors.New(s))
 }
 
 func (e Error) SprintSkip(skip string) string {
@@ -125,7 +125,7 @@ func Wrapf(err error, msg string, args ...interface{}) error {
 
 // panic and wrap if err != nil
 // DANGER !
-func Checkf(err error, msg string, args ...interface{}) {
+func MustWrapf(err error, msg string, args ...interface{}) {
 	if err == nil {
 		return
 	}
@@ -134,15 +134,15 @@ func Checkf(err error, msg string, args ...interface{}) {
 
 // panic and wrap if err != nil
 // DANGER !
-func Check(err error) {
+func MustWrap(err error) {
 	if err == nil {
 		return
 	}
-	panic(Stack(err))
+	panic(Wrap(err))
 }
 
 // Stack add stack trace to an error if it's not
-func Stack(e error) error {
+func Wrap(e error) error {
 	if e == nil {
 		return e
 	}

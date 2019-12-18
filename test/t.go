@@ -19,7 +19,7 @@ func b() error {
 	if errors.Is(e, sql.ErrNoRows) {
 		return werr.Wrapf(e, "SQLNOROWS in B")
 	}
-	return fmt.Errorf("from b : %w", werr.Stack(e))
+	return fmt.Errorf("from b : %w", werr.Wrap(e))
 }
 func c() error {
 	e := d()
@@ -29,11 +29,11 @@ func d() error {
 	//panic("ici")
 	e := lib.Lili()
 	//werr.Check(e)
-	werr.Checkf(e, "panique à bord")
+	werr.MustWrapf(e, "panique à bord")
 	if errors.Is(e, sql.ErrNoRows) {
 		return werr.Wrapf(e, "SQLNOROWS in D")
 	}
-	return fmt.Errorf("from d : %w", werr.Stack(e))
+	return fmt.Errorf("from d : %w", werr.Wrap(e))
 }
 
 func main() {
