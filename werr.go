@@ -87,9 +87,9 @@ func PrintSkip(err error, skip string) {
 func SprintSkip(err error, skip string) string {
 	var e Error
 	if errors.As(err, &e) {
-		return e.SprintSkip(skip) + err.Error()
+		return e.SprintSkip(skip) + "\n" + err.Error()
 	}
-	return fmt.Sprintf("%+v", err) // pkg.errors stack
+	return SprintSkip(Wrap(err), skip)
 }
 
 // Fprint write traceback in f
