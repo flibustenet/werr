@@ -51,11 +51,12 @@ func (e Error) SprintSkip(skip string) string {
 	for i := len(trace) - 1; i >= 0; i-- {
 		frame := trace[i]
 		if skip != "" && strings.HasSuffix(frame.Function, skip) {
+			maxLenFunc = 0
 			continue
 		}
-		s := fmt.Sprintf("%s:%d", frame.File, frame.Line)
-		if len(s) > maxLenFunc {
-			maxLenFunc = len(s)
+		st := fmt.Sprintf("%s:%d", frame.File, frame.Line)
+		if len(st) > maxLenFunc {
+			maxLenFunc = len(st)
 		}
 	}
 
