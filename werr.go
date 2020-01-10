@@ -34,6 +34,10 @@ func New(s string) error {
 	return Wrap(errors.New(s))
 }
 
+func Errorf(s string, args ...interface{}) error {
+	return Wrap(fmt.Errorf(s, args...))
+}
+
 func (e Error) SprintSkip(skip string) string {
 	trace := []runtime.Frame{}
 	frames := runtime.CallersFrames(e.trace)

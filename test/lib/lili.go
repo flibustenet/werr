@@ -10,7 +10,7 @@ import (
 func Lili() error {
 	err := Lolo()
 	//return werr.Wrapf(err, "in my lib %s", "ici")
-	return fmt.Errorf("in my lib : %w", werr.Stack(err))
+	return fmt.Errorf("in my lib : %w", werr.Wrap(err))
 }
 
 func Lolo() error {
