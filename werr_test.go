@@ -61,8 +61,8 @@ func reLines(t *testing.T, lines string, resRe string) bool {
 func Test_WrapAB(t *testing.T) {
 	res := SprintSkip(aA(), "Test_WrapAB")
 	reLines(t, res, `
-		werr_test.go:\d+ \| go.flib.fr/werr.aA
-		werr_test.go:\d+ \| go.flib.fr/werr.aB
+		werr_test.go:\d+ \| go.flibuste.net/werr.aA
+		werr_test.go:\d+ \| go.flibuste.net/werr.aB
 		MyError`)
 }
 
@@ -91,15 +91,13 @@ func bC() error {
 func Test_ByFmt(t *testing.T) {
 	res := SprintSkip(bA(), "Test_ByFmt")
 	reLines(t, res, `
-		werr_test.go:\d+ \| go.flib.fr/werr.bA
-		werr_test.go:\d+ \| go.flib.fr/werr.bB
-		werr_test.go:\d+ \| go.flib.fr/werr.bC
+		werr_test.go:\d+ \| go.flibuste.net/werr.bA
+		werr_test.go:\d+ \| go.flibuste.net/werr.bB
+		werr_test.go:\d+ \| go.flibuste.net/werr.bC
 		by fmt.Errorf : MyError`)
 }
 
-//
 // test new with werr.Errorf
-//
 func cA() error {
 	return cB()
 }
@@ -109,15 +107,13 @@ func cB() error {
 func Test_New(t *testing.T) {
 	res := SprintSkip(cA(), "Test_New")
 	reLines(t, res, `
-		werr_test.go:\d+ \| go.flib.fr/werr.cA
-		werr_test.go:\d+ \| go.flib.fr/werr.cB
-		werr.go:\d+\s+\| go.flib.fr/werr.New
+		werr_test.go:\d+ \| go.flibuste.net/werr.cA
+		werr_test.go:\d+ \| go.flibuste.net/werr.cB
+		werr.go:\d+\s+\| go.flibuste.net/werr.New
 		New`)
 }
 
-//
 // test new with werr.New
-//
 func dA() error {
 	return dB()
 }
@@ -127,8 +123,8 @@ func dB() error {
 func Test_Errorf(t *testing.T) {
 	res := SprintSkip(dA(), "Test_Errorf")
 	reLines(t, res, `
-		werr_test.go:\d+ \| go.flib.fr/werr.dA
-		werr_test.go:\d+ \| go.flib.fr/werr.dB
-		werr.go:\d+\s+\| go.flib.fr/werr.Errorf
+		werr_test.go:\d+ \| go.flibuste.net/werr.dA
+		werr_test.go:\d+ \| go.flibuste.net/werr.dB
+		werr.go:\d+\s+\| go.flibuste.net/werr.Errorf
 		New here`)
 }

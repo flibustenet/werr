@@ -6,8 +6,8 @@ import (
 	"fmt"
 	"runtime/debug"
 
-	"go.flib.fr/werr"
-	"go.flib.fr/werr/test/lib"
+	"go.flibuste.net/werr"
+	"go.flibuste.net/werr/test/lib"
 )
 
 func a() error {

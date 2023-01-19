@@ -4,7 +4,7 @@ import (
 	"database/sql"
 	"fmt"
 
-	"go.flib.fr/werr"
+	"go.flibuste.net/werr"
 )
 
 func Lili() error {
