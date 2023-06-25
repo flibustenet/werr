@@ -1,3 +1,3 @@
 module go.flibuste.net/werr
 
-go 1.13
+go 1.20

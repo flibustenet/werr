@@ -1,3 +1,0 @@
-v0.0.8
-- remplace Stack par Wrap
-- ajout MustWrap et MustWrapf (wrap et panic si err != nil)
