@@ -54,3 +54,18 @@ func TestWraping(t *testing.T) {
 		t.Errorf("Trace should not wrap")
 	}
 }
+
+func TestNull(t *testing.T) {
+	newErr := werr.Wrap(nil)
+	if newErr != nil {
+		t.Errorf("nil should be nil")
+	}
+	newErr = werr.Wrapf(nil, "")
+	if newErr != nil {
+		t.Errorf("nil should be nil")
+	}
+	newErr = werr.Trace(nil)
+	if newErr != nil {
+		t.Errorf("nil should be nil")
+	}
+}

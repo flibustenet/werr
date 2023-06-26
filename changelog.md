@@ -1,6 +1,8 @@
 # CHANGELOG
 
 ## v0.5.3
+- Options for full path/method
+- nil return nil with Wrap Wrapf and Trace
 - doc for %v vs %w
 
 ## v0.5.2
