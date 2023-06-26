@@ -4,7 +4,10 @@
 package main
 
 import (
+	"errors"
 	"testing"
+
+	"go.flibuste.net/werr"
 )
 
 func TestTraces(t *testing.T) {
@@ -13,26 +16,41 @@ func TestTraces(t *testing.T) {
 		res string
 	}{
 		{errorf(), `
-> werr/test.errorf() errorf.go:8
+> werr/test.errorf() errorf.go:11
 errorf: fail`},
 		{wrapf(), `
-> werr/test.wrapf() wrapf.go:8
+> werr/test.wrapf() wrapf.go:11
 wrapf: fail`},
 		{fnew(), `
-> werr/test.fnew() new.go:6
+> werr/test.fnew() new.go:9
 new`},
 		{ftrace(), `
-> werr/test.ftrace() ftrace.go:8
+> werr/test.ftrace() ftrace.go:11
 fail`},
 		{two(), `
-> werr/test.two() two.go:8
+> werr/test.two() two.go:11
 two: 
-> werr/test.one() two.go:11
+> werr/test.one() two.go:14
 one: fail`},
+		{wrap(), `
+> werr/test.wrap() wrap.go:11
+fail`},
 	} {
 		res := tst.err.Error()
 		if res != tst.res {
 			t.Errorf("%d Should be [%s] is [%s]", i, tst.res, res)
 		}
+	}
+}
+
+func TestWraping(t *testing.T) {
+	err := errors.New("oups")
+	newErr := werr.Wrap(err)
+	if !errors.Is(newErr, err) {
+		t.Errorf("Wrap should wrap")
+	}
+	newErr = werr.Trace(err)
+	if errors.Is(newErr, err) {
+		t.Errorf("Trace should not wrap")
 	}
 }

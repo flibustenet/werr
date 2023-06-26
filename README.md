@@ -22,6 +22,9 @@ Erreur en lecture issue x: strconv.Atoi: parsing "x": invalid syntax
 Wrap or create the error with one of the werr functions, it'll add the
 function/method name and the file:line in the string. Nothing more.
 
+`Wrap` and `Wrapf` will wrap the error, like `%w`.
+`Trace` will not wrap the error, like `%v`.
+
 Just print the error.
 
 ## How to adapt a legacy app
@@ -29,19 +32,26 @@ Just print the error.
 Replace `fmt.Errorf` with `werr.Errorf`
 ```
 sed -i 's/fmt.Errorf/werr.Errorf/g' *go
-gofmt -w *.go
 ```
 
 Replace `errors.New` with `werr.New`
 ```
 sed -i 's/errors.New/werr.New/g' *go
-gofmt -w *.go
 ```
 
-Add trace to return err without decoration
+Add trace to return err without decoration, like `%v`
 ```
 sed -i 's/return err/return werr.Trace(err)/g' *go
-gofmt -w *.go
+```
+
+Add trace + wrap to return err without decoration, like `%w`
+```
+sed -i 's/return err/return werr.Wrap(err)/g' *go
+```
+
+Add `import go.flibuste.net/werr`
+```
+goimports -w *.go
 ```
 
 Find return err still not decorated

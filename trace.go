@@ -19,12 +19,14 @@ func Wrapf(err error, s string, vals ...any) error {
 	return tracef(2, s+": %w", vals...)
 }
 
-// Wrap return error with trace and : %w
+// Wrap return error with trace and %w
 func Wrap(err error) error {
-	return Wrapf(err, "")
+	return tracef(2, "%w", err)
 }
 
 // Errorf like fmt.Errorf with trace
+// wrap if %w
+// not wrap if %v
 func Errorf(s string, vals ...any) error {
 	return tracef(2, s, vals...)
 }
@@ -35,6 +37,7 @@ func New(s string) error {
 }
 
 // Trace add trace to the error
+// not wrapping, like %v
 func Trace(err error) error {
 	if err == nil {
 		return err
