@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## v0.5.1
+
+- short name
+
 ## v0.5.0 BREAKING CHANGES
 - very simple, add only method + file:line, not more all the stack
 

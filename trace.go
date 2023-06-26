@@ -39,12 +39,18 @@ func Trace(err error) error {
 	return tracef(2, err.Error())
 }
 
+func Fail() error {
+	return New("fail")
+}
+
 // tracef add trace before calling fmt.Errorf
 func tracef(skip int, s string, vals ...any) error {
 	pc, file, line, ok := runtime.Caller(skip)
 	if ok && WithTrace {
+		splt := strings.Split(runtime.FuncForPC(pc).Name(), "/")
+		name := strings.Join(splt[1:], "/")
 		info := fmt.Sprintf("\n> %s() %s:%d\n",
-			runtime.FuncForPC(pc).Name(),
+			name,
 			filepath.Base(file), line)
 		s = info + strings.TrimSpace(s)
 	}
