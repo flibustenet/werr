@@ -1,3 +1,6 @@
+Disclaimer: private use and with my coworkers. It will break! feel free to copy-paste.
+
+
 # werr: opt-in traces in errors.
 
 Add the name of the function/method and the file:line opt-in on each error
@@ -13,6 +16,8 @@ Erreur en lecture issue x: strconv.Atoi: parsing "x": invalid syntax
 ```
 
 ## Usage
+
+`go get go.flibuste.net/werr`
 
 Wrap or create the error with one of the werr functions, it'll add the
 function/method name and the file:line in the string. Nothing more.
