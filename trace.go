@@ -48,15 +48,6 @@ func New(s string) error {
 	return tracef(2, s)
 }
 
-// Trace add trace to the error
-// not wrapping, like %v
-func Trace(err error) error {
-	if err == nil {
-		return err
-	}
-	return tracef(2, err.Error())
-}
-
 // tracef add trace before calling fmt.Errorf
 func tracef(skip int, s string, vals ...any) error {
 	pc, file, line, ok := runtime.Caller(skip)

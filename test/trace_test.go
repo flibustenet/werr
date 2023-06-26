@@ -24,9 +24,6 @@ wrapf: fail`},
 		{fnew(), `
 > werr/test.fnew() new.go:9
 new`},
-		{ftrace(), `
-> werr/test.ftrace() ftrace.go:11
-fail`},
 		{two(), `
 > werr/test.two() two.go:11
 two: 
@@ -49,9 +46,9 @@ func TestWraping(t *testing.T) {
 	if !errors.Is(newErr, err) {
 		t.Errorf("Wrap should wrap")
 	}
-	newErr = werr.Trace(err)
-	if errors.Is(newErr, err) {
-		t.Errorf("Trace should not wrap")
+	newErr = werr.Wrapf(err, "")
+	if !errors.Is(newErr, err) {
+		t.Errorf("Wrapf should wrap")
 	}
 }
 
@@ -61,10 +58,6 @@ func TestNull(t *testing.T) {
 		t.Errorf("nil should be nil")
 	}
 	newErr = werr.Wrapf(nil, "")
-	if newErr != nil {
-		t.Errorf("nil should be nil")
-	}
-	newErr = werr.Trace(nil)
 	if newErr != nil {
 		t.Errorf("nil should be nil")
 	}

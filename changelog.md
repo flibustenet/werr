@@ -1,5 +1,8 @@
 # CHANGELOG
 
+## v0.5.4
+- Deprecate `Trace` use `Wrap` instead
+
 ## v0.5.3
 - Options for full path/method
 - nil return nil with Wrap Wrapf and Trace

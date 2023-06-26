@@ -23,7 +23,8 @@ Wrap or create the error with one of the werr functions, it'll add the
 function/method name and the file:line in the string. Nothing more.
 
 `Wrap` and `Wrapf` will wrap the error, like `%w`.
-`Trace` will not wrap the error, like `%v`.
+`Errorf` is like `fmt.Errorf` with trace
+`New` is like `errors.New` with trace
 
 Just print the error.
 
@@ -37,11 +38,6 @@ sed -i 's/fmt.Errorf/werr.Errorf/g' *go
 Replace `errors.New` with `werr.New`
 ```
 sed -i 's/errors.New/werr.New/g' *go
-```
-
-Add trace to return err without decoration, like `%v`
-```
-sed -i 's/return err/return werr.Trace(err)/g' *go
 ```
 
 Add trace + wrap to return err without decoration, like `%w`
