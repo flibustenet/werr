@@ -1,5 +1,8 @@
 # CHANGELOG
 
+## v0.5.3
+- doc for %v vs %w
+
 ## v0.5.2
 - copyright, tests
 
