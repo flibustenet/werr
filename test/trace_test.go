@@ -10,21 +10,21 @@ func TestTraces(t *testing.T) {
 		res string
 	}{
 		{errorf(), `
-> go.flibuste.net/werr/test.errorf() errorf.go:8
+> werr/test.errorf() errorf.go:8
 errorf: fail`},
 		{wrapf(), `
-> go.flibuste.net/werr/test.wrapf() wrapf.go:8
+> werr/test.wrapf() wrapf.go:8
 wrapf: fail`},
 		{fnew(), `
-> go.flibuste.net/werr/test.fnew() new.go:6
+> werr/test.fnew() new.go:6
 new`},
 		{ftrace(), `
-> go.flibuste.net/werr/test.ftrace() ftrace.go:8
+> werr/test.ftrace() ftrace.go:8
 fail`},
 		{two(), `
-> go.flibuste.net/werr/test.two() two.go:8
+> werr/test.two() two.go:8
 two: 
-> go.flibuste.net/werr/test.one() two.go:11
+> werr/test.one() two.go:11
 one: fail`},
 	} {
 		res := tst.err.Error()

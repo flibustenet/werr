@@ -1,6 +1,23 @@
 # werr: opt-in traces in errors.
 
-Some error helper for personal use and with my coworkers.
+Add the name of the function/method and the file:line opt-in on each error
+to print a minimalist traceback with decorations.
+
+Example:
+
+```
+> gotodo/vue.Issue() issue.go:29
+read issue:
+> gotodo/model.(*Project).GetIssueStr() issue.go:99
+Erreur en lecture issue x: strconv.Atoi: parsing "x": invalid syntax
+```
+
+## Usage
+
+Wrap or create the error with one of the werr functions, it'll add the
+function/method name and the file:line in the string. Nothing more.
+
+Just print the error.
 
 ## How to adapt a legacy app
 

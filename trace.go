@@ -39,10 +39,6 @@ func Trace(err error) error {
 	return tracef(2, err.Error())
 }
 
-func Fail() error {
-	return New("fail")
-}
-
 // tracef add trace before calling fmt.Errorf
 func tracef(skip int, s string, vals ...any) error {
 	pc, file, line, ok := runtime.Caller(skip)
