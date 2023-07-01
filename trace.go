@@ -19,7 +19,7 @@ var WithFullPath = false
 // Show full name instead of [1:]
 var WithFullName = false
 
-// Wrapf return formated error with trace and : %w
+// Wrapf returns formated error with trace and : %w
 func Wrapf(err error, s string, vals ...any) error {
 	if err == nil {
 		return nil
@@ -28,7 +28,7 @@ func Wrapf(err error, s string, vals ...any) error {
 	return tracef(2, s+": %w", vals...)
 }
 
-// Wrap return error with trace and %w
+// Wrap returns error with trace and %w
 func Wrap(err error) error {
 	if err == nil {
 		return nil
@@ -36,14 +36,14 @@ func Wrap(err error) error {
 	return tracef(2, "%w", err)
 }
 
-// Errorf like fmt.Errorf with trace
+// Errorf is like fmt.Errorf with trace
 // wrap if %w
 // not wrap if %v
 func Errorf(s string, vals ...any) error {
 	return tracef(2, s, vals...)
 }
 
-// New like errors.New with trace
+// New is like errors.New with trace
 func New(s string) error {
 	return tracef(2, s)
 }

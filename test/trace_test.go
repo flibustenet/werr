@@ -24,14 +24,21 @@ wrapf: fail`},
 		{fnew(), `
 > werr/test.fnew() new.go:9
 new`},
-		{two(), `
-> werr/test.two() two.go:11
-two: 
-> werr/test.one() two.go:14
-one: fail`},
 		{wrap(), `
 > werr/test.wrap() wrap.go:11
 fail`},
+		{two(), `
+> werr/test.two() two.go:14
+two: 
+> werr/test.one() two.go:17
+one: fail`},
+		{three(), `
+> werr/test.three() two.go:11
+three: 
+> werr/test.two() two.go:14
+two: 
+> werr/test.one() two.go:17
+one: fail`},
 	} {
 		res := tst.err.Error()
 		if res != tst.res {

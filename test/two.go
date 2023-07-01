@@ -7,6 +7,9 @@ import (
 	"go.flibuste.net/werr"
 )
 
+func three() error {
+	return werr.Wrapf(two(), "three")
+}
 func two() error {
 	return werr.Wrapf(one(), "two")
 }
