@@ -16,29 +16,20 @@ func TestTraces(t *testing.T) {
 		res string
 	}{
 		{errorf(), `
-> werr/test.errorf() errorf.go:11
-errorf: fail`},
+> test.errorf(11): errorf: fail`},
 		{wrapf(), `
-> werr/test.wrapf() wrapf.go:11
-wrapf: fail`},
+> test.wrapf(11): wrapf: fail`},
 		{fnew(), `
-> werr/test.fnew() new.go:9
-new`},
+> test.fnew(9): new`},
 		{wrap(), `
-> werr/test.wrap() wrap.go:11
-fail`},
+> test.wrap(11): fail`},
 		{two(), `
-> werr/test.two() two.go:14
-two: 
-> werr/test.one() two.go:17
-one: fail`},
+> test.two(14): two: 
+> test.one(17): one: fail`},
 		{three(), `
-> werr/test.three() two.go:11
-three: 
-> werr/test.two() two.go:14
-two: 
-> werr/test.one() two.go:17
-one: fail`},
+> test.three(11): three: 
+> test.two(14): two: 
+> test.one(17): one: fail`},
 	} {
 		res := tst.err.Error()
 		if res != tst.res {
