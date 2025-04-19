@@ -54,3 +54,4 @@ Find return err still not decorated
 `ack 'return.*err$'`
 
 Be carefull when comparing `err == ...` to replace by `errors.Is`
+Also `err.(...`

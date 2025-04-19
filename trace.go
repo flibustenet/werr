@@ -19,6 +19,11 @@ var WithFullPath = false
 // Show full name instead of [1:]
 var WithFullName = false
 
+var WithShortName = true
+
+// Show only package/method():line
+var WithJustMethod = true
+
 // Wrapf returns formated error with trace and : %w
 func Wrapf(err error, s string, vals ...any) error {
 	if err == nil {
@@ -57,12 +62,21 @@ func tracef(skip int, s string, vals ...any) error {
 			splt := strings.Split(runtime.FuncForPC(pc).Name(), "/")
 			name = strings.Join(splt[1:], "/")
 		}
+		if WithShortName {
+			splt := strings.Split(runtime.FuncForPC(pc).Name(), "/")
+			name = splt[len(splt)-1]
+		}
 		path := file
 		if !WithFullPath {
 			path = filepath.Base(file)
 		}
-		info := fmt.Sprintf("\n> %s() %s:%d\n",
-			name, path, line)
+		info := ""
+		if WithJustMethod {
+			info = fmt.Sprintf("\n> %s(%d): ", name, line)
+		} else {
+			info = fmt.Sprintf("\n> %s() %s:%d\n",
+				name, path, line)
+		}
 		s = info + strings.TrimSpace(s)
 	}
 	return fmt.Errorf(s, vals...)

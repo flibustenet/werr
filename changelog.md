@@ -1,5 +1,8 @@
 # CHANGELOG
 
+## v0.6.0
+- Only method(line):
+
 ## v0.5.4
 - Deprecate `Trace` use `Wrap` instead
 
